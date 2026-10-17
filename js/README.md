@@ -10,7 +10,7 @@
 
 | 이름 | 파일 | 모양 |
 |---|---|---|
-| `window.RULES` | `rules.js` (#5) | 아래 「RULES 모양 제안」 |
+| `window.RULES` | `rules.js` (#5) | 아래 「RULES 모양」 |
 | `window.EXAMPLE_CSV` | `data/example.js` (#6) | `data/example.csv`와 같은 내용을 담은 문자열 |
 
 ## A · 데이터 처리
@@ -39,24 +39,39 @@
 
 파일 저장(다운로드)과 버튼 연결은 `app.js`가 한다.
 
-## RULES 모양 제안 (#5에서 확정)
+## RULES 모양 (#5에서 확정)
+
+전체 값과 적용 방식(낱말 일치 · 등급 고르는 순서 · 중요도 식 · 키워드 추출 순서)은 `rules.js` 맨 위 주석에 있다. 아래는 모양만.
 
 ```js
 window.RULES = {
-  topics: {                       // 주제 이름 → 한·영 키워드
-    "AI 에이전트": ["에이전트", "agent", "MCP"],
+  version: "0.2 …",
+  topics: {                       // 주제 이름 → 키워드. 적힌 순서 = 화면 순서
+    "AI 에이전트": {
+      en: ["ai agent", "agentic", "mcp"],      // 낱말 단위로 일치
+      ko: ["에이전트", "에이전틱"],            // 제목에 들어 있으면 일치
+      exclude: ["travel agent"]                // 걸리면 이 주제는 안 붙임
+    },
     // … 5개
   },
-  sources: [                      // 출처 등급표 (기획안 「출처 등급과 근거」)
-    { domain: "arxiv.org", type: "프리프린트", grade: "B", oa: true, reason: "심사 전 논문 · 원문 무료" }
-  ],
   gradeWeight: { A: 3, B: 2, C: 1, D: 0.5 },
-  score: { overlap: 2, recencyDays: 30 },   // 겹침 기준 · 최신성 감소 폭 〔사람이 정할 것〕
+  unknownGrade: "C",              // 등급표에 없는 도메인
+  sources: [                      // 출처 등급표 (기획안 「출처 등급과 근거」)
+    { domain: "arxiv.org", type: "프리프린트", grade: "B", oa: true, reason: "심사 전 논문 · 원문 무료" },
+    { domain: "huggingface.co", pathPrefix: "/papers", type: "프리프린트", grade: "B", oa: true, reason: "…" }
+  ],
+  score: { overlap: 2, recencyHalfLifeDays: 14, topN: 5 },   // 〔사람이 정할 것〕
   keywords: {
-    phrases: ["EU AI Act", "AI 기본법", "휴머노이드"],
-    stopwords: ["AI", "인공지능", "발표", "공개"]
+    windows: [{ id: "90d", label: "90일", days: 90 }, /* 30d · 7d · 1d */],
+    topN: 10, minKo: 2, minEn: 3,
+    phrases: ["EU AI Act", "AI 기본법"],
+    particles: ["으로", "에서", "은", "는"],
+    stopwords: { en: ["the", "ai"], ko: ["인공지능", "발표"] }
   }
 };
 ```
+
+- `score.recencyHalfLifeDays`: 기준일에서 이 일수만큼 지나면 최신성이 절반 (`0.5 ^ (경과일 ÷ 값)`)
+- `sources`는 도메인이 가장 긴 줄, 그다음 `pathPrefix`가 있는 줄이 이긴다
 
 `app.js`는 주제 순서를 `Object.keys(RULES.topics)`로 읽는다.
