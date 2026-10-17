@@ -6,6 +6,7 @@
 // 1. 주제 분류
 //    - 제목을 소문자로 바꾼 뒤 찾는다.
 //    - en: 낱말 단위로 일치해야 센다 (예: 'eu'는 "statichost.eu"에 걸리지 않음). 구는 구 전체가 일치해야 함.
+//      그래서 숫자가 바로 붙는 모델 이름("Qwen3.8")은 'qwen'으로 안 걸린다 → "qwen3"처럼 따로 적는다.
 //    - ko: 제목 안에 그 글자가 들어 있으면 센다 (조사가 붙어도 걸림).
 //    - exclude에 걸리면 그 주제는 붙이지 않는다.
 //    - 한 기사에 여러 주제가 붙을 수 있다. 아무 주제도 안 붙으면 '미분류'.
@@ -24,7 +25,7 @@
 //    - 기간: 기준일을 포함해 거꾸로 days일. 직전 기간 = 그 바로 앞 같은 길이.
 
 window.RULES = {
-  version: "0.1 (0단계 초안 · 2026-10-17)",
+  version: "0.2 (예시 데이터 도메인 보충 · 2026-10-17)",
 
   // ── W2 · 주제 분류 사전 ────────────────────────────────────────────
   // 주제 이름 → { en, ko, exclude }. 적힌 순서 = 화면 표시 순서 (app.js가 Object.keys로 읽음). 경계는 기획안 v3 「주제 5개」 표를 따른다.
@@ -41,9 +42,9 @@ window.RULES = {
       en: ["ai safety", "safety", "ethics", "ethical", "bias", "biased", "alignment", "deepfake", "deepfakes",
            "misinformation", "disinformation", "guardrail", "guardrails", "regulation", "regulations",
            "regulator", "regulators", "regulatory", "ai act", "governance", "lawsuit", "copyright",
-           "privacy", "executive order", "accountability", "transparency"],
+           "privacy", "executive order", "accountability", "transparency", "white house", "lawmakers", "watermark", "watermarking"],
       ko: ["윤리", "안전", "편향", "딥페이크", "허위정보", "가짜뉴스", "규제", "기본법", "법안", "입법",
-           "거버넌스", "가이드라인", "저작권", "개인정보", "책임성", "투명성"],
+           "거버넌스", "가이드라인", "저작권", "개인정보", "책임성", "투명성", "워터마크", "고영향", "소송"],
       exclude: []
     },
     "AI 리터러시·교육": {
@@ -57,7 +58,7 @@ window.RULES = {
     "피지컬 AI·로보틱스": {
       // 휴머노이드, 로봇 기초 모델, 자율주행·제조 현장 AI.
       en: ["robot", "robots", "robotic", "robotics", "humanoid", "humanoids", "physical ai", "embodied",
-           "autonomous driving", "self-driving", "robotaxi", "robotaxis", "drone", "drones", "lerobot"],
+           "autonomous driving", "self-driving", "robotaxi", "robotaxis", "drone", "drones", "lerobot", "vla", "vision-language-action", "video-action"],
       ko: ["로봇", "휴머노이드", "피지컬", "자율주행", "로보택시", "드론"],
       exclude: []
     },
@@ -65,9 +66,9 @@ window.RULES = {
       // 상용·오픈 웨이트 모델의 출시, 성능·벤치마크, 가격·라이선스, 지원 중단. 모델을 쓴 응용 사례는 해당 응용 주제로.
       en: ["foundation model", "foundation models", "large language model", "large language models", "llm", "llms",
            "language model", "open-weight", "open weights", "gpt", "chatgpt", "claude", "gemini", "gemma",
-           "llama", "qwen", "deepseek", "mistral", "grok", "kimi", "glm", "benchmark", "benchmarks"],
+           "llama", "qwen", "qwen3", "deepseek", "mistral", "grok", "kimi", "glm", "nemotron", "benchmark", "benchmarks"],
       ko: ["거대언어모델", "대규모 언어모델", "언어모델", "파운데이션 모델", "오픈소스 모델", "챗gpt", "챗GPT",
-           "클로드", "제미나이", "딥시크", "큐원", "벤치마크"],
+           "클로드", "제미나이", "딥시크", "큐원", "네모트론", "벤치마크"],
       exclude: []
     }
   },
@@ -178,7 +179,78 @@ window.RULES = {
     { domain: "news.hada.io", type: "커뮤니티", grade: "D", oa: true, reason: "국내 개발자 커뮤니티(GeekNews) · 사실 확인 없음" },
     { domain: "x.com", type: "커뮤니티", grade: "D", oa: true, reason: "개인 게시물 · 사실 확인 없음" },
     { domain: "twitter.com", type: "커뮤니티", grade: "D", oa: true, reason: "개인 게시물 · 사실 확인 없음" },
-    { domain: "medium.com", type: "커뮤니티", grade: "D", oa: true, reason: "누구나 쓸 수 있는 블로그 플랫폼 · 저자 전문성 확인 어려움" }
+    { domain: "medium.com", type: "커뮤니티", grade: "D", oa: true, reason: "누구나 쓸 수 있는 블로그 플랫폼 · 저자 전문성 확인 어려움" },
+
+    // ── 예시 데이터(#6)에서 나와 추가한 도메인 (#5 두 번째 PR) ──
+    // 작은 인터넷 매체·학술지의 등급은 사이트 소개와 운영 주체만 보고 매긴 기본값이다 〔팀원 확인〕
+    // A · 동료심사 · 정부 연구기관
+    { domain: "ebooks.iospress.nl", type: "학회 논문", grade: "A", oa: true, reason: "IOS Press 학회 논문집(FAIA) · 동료심사" },
+    { domain: "linkinghub.elsevier.com", type: "학술지", grade: "A", oa: false, reason: "Elsevier 학술지 주소로 넘겨 주는 링크 · 원문 공개는 학술지마다 다름" },
+    { domain: "revue-mediations.teluq.ca", type: "학술지", grade: "A", oa: true, reason: "TÉLUQ 대학 동료심사 오픈 액세스 학술지" },
+    { domain: "nso.edu", type: "정부 연구기관", grade: "A", oa: true, reason: "미국 국립태양관측소(NSF) 공식 발표 · 1차 자료" },
+    // B · 학술 단행본 · 학위논문 · 언론
+    { domain: "taylorfrancis.com", type: "학술 단행본", grade: "B", oa: false, reason: "학술 출판사 단행본 · 편집 검토는 있으나 학술지 동료심사와 다름 · 원문 유료" },
+    { domain: "dias.library.tuc.gr", type: "학위논문", grade: "B", oa: true, reason: "크레타 공대 기관 저장소 · 학위논문(지도교수 심사)" },
+    { domain: "afr.com", type: "주요 언론", grade: "B", oa: false, reason: "호주 경제 일간지 · 편집 검증 있음 · 유료" },
+    { domain: "techspot.com", type: "전문 언론", grade: "B", oa: true, reason: "기술 전문 언론 · 편집 검증 있음" },
+    { domain: "xda-developers.com", type: "전문 언론", grade: "B", oa: true, reason: "기술 전문 언론 · 편집 검증 있음 · 직접 써 본 후기 기사 많음" },
+    { domain: "yonhapnewstv.co.kr", type: "주요 언론", grade: "B", oa: true, reason: "연합뉴스TV · 편집 검증 있음" },
+    { domain: "science.ytn.co.kr", type: "주요 언론", grade: "B", oa: true, reason: "YTN 사이언스(방송) · 편집 검증 있음" },
+    { domain: "newspim.com", type: "주요 언론", grade: "B", oa: true, reason: "통신사(뉴스핌) · 편집 검증 있음" },
+    { domain: "kyeonggi.com", type: "주요 언론", grade: "B", oa: true, reason: "지역 일간지(경기일보) · 편집 검증 있음" },
+    { domain: "lawtimes.co.kr", type: "전문 언론", grade: "B", oa: true, reason: "법률 전문지(법률신문) · 편집 검증 있음" },
+    { domain: "epnc.co.kr", type: "전문 언론", grade: "B", oa: true, reason: "전자·반도체 산업 전문지 · 편집 검증 있음" },
+    // C · 작은 인터넷 매체 · 포털 재전송 (편집 검증 수준을 확인하지 못함)
+    { domain: "v.daum.net", type: "포털 재전송", grade: "C", oa: true, reason: "포털이 언론사 기사를 다시 실은 주소 · 원 언론사로 다시 매겨야 함" },
+    { domain: "wikitree.co.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "인터넷 언론 · 편집 검증 수준 확인 못 함" },
+    { domain: "devtimes.co.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "IT 인터넷 언론 · 편집 검증 수준 확인 못 함" },
+    { domain: "aipostkorea.com", type: "인터넷 언론", grade: "C", oa: true, reason: "AI 인터넷 매체 · 편집 검증 수준 확인 못 함" },
+    { domain: "fetv.co.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "경제 인터넷 방송 매체 · 편집 검증 수준 확인 못 함" },
+    { domain: "energykorea.co.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "에너지 산업 인터넷 매체 · 편집 검증 수준 확인 못 함" },
+    { domain: "newsworker.co.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "인터넷 언론 · 편집 검증 수준 확인 못 함" },
+    { domain: "theguru.co.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "산업 인터넷 매체 · 편집 검증 수준 확인 못 함" },
+    { domain: "kyobit.com", type: "인터넷 언론", grade: "C", oa: true, reason: "교육 인터넷 매체 · 편집 검증 수준 확인 못 함" },
+    { domain: "eduyonhap.com", type: "인터넷 언론", grade: "C", oa: true, reason: "교육 인터넷 매체 · 칼럼 위주" },
+    { domain: "gokorea.kr", type: "인터넷 언론", grade: "C", oa: true, reason: "인터넷 언론 · 편집 검증 수준 확인 못 함" },
+    { domain: "headlinejeju.co.kr", type: "지역 인터넷 언론", grade: "C", oa: true, reason: "제주 지역 인터넷 언론" },
+    { domain: "mediajeju.com", type: "지역 인터넷 언론", grade: "C", oa: true, reason: "제주 지역 인터넷 언론 · 기고" },
+    // C · 연구 저장소 · 학술 행사 · 심사 수준 확인이 어려운 학술지
+    { domain: "zenodo.org", type: "연구 저장소", grade: "C", oa: true, reason: "누구나 올리는 연구 저장소(CERN 운영) · 심사 없음 · 원문 무료" },
+    { domain: "calenda.org", type: "학술 행사 공고", grade: "C", oa: true, reason: "학술 행사·원고 모집 공고 플랫폼(OpenEdition) · 1차 공고" },
+    { domain: "student-journals.ucl.ac.uk", type: "학생 학술지", grade: "C", oa: true, reason: "UCL 학생 학술지 · 심사 수준 확인 어려움" },
+    { domain: "cspub-ijcisim.org", type: "학술지", grade: "C", oa: true, reason: "국제 학술지(IJCISIM) · 심사 수준 확인 못 함" },
+    { domain: "vidhiaagaz.com", type: "법률 출판 플랫폼", grade: "C", oa: true, reason: "법률 해설·출판 플랫폼 · 심사 여부 확인 못 함" },
+    { domain: "terminal-bench-science.ai", type: "벤치마크 발표", grade: "C", oa: true, reason: "벤치마크 프로젝트 공식 사이트 · 자체 발표" },
+    // C · 기업 발표 (자사 이해관계)
+    { domain: "mistral.ai", type: "기업 발표", grade: "C", oa: true, reason: "자사 모델 1차 발표 · 자사 이해관계" },
+    { domain: "research.meta.ai", type: "기업 발표", grade: "C", oa: true, reason: "자사 연구·모델 1차 발표 · 자사 이해관계" },
+    { domain: "deepseek.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 제품 1차 발표 · 자사 이해관계" },
+    { domain: "bfl.ai", type: "기업 발표", grade: "C", oa: true, reason: "Black Forest Labs 자사 모델 발표 · 자사 이해관계" },
+    { domain: "modelscope.cn", type: "모델 저장소", grade: "C", oa: true, reason: "알리바바 모델 저장소 · 작성자 자기신고" },
+    { domain: "inference-docs.cerebras.ai", type: "기업 기술문서", grade: "C", oa: true, reason: "자사 서비스 문서 · 자사 이해관계" },
+    { domain: "artificialanalysis.ai", type: "상업 벤치마크", grade: "C", oa: true, reason: "모델 성능·가격 비교 서비스 · 방법은 공개돼 있으나 상업 서비스" },
+    { domain: "fireworks.ai", type: "기업 발표", grade: "C", oa: true, reason: "추론 서비스 기업 블로그 · 자사 이해관계" },
+    { domain: "telnyx.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 서비스 출시 공지 · 자사 이해관계" },
+    { domain: "blog.jetbrains.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 제품 발표 · 자사 이해관계" },
+    { domain: "docker.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 제품 페이지 · 자사 이해관계" },
+    { domain: "capitalone.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 오픈소스 공개 글 · 자사 이해관계" },
+    { domain: "go.dev", type: "기업 발표", grade: "C", oa: true, reason: "Go 언어 공식 블로그 · 1차 기술 글" },
+    { domain: "cactuscompute.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 모델 소개 · 자사 이해관계" },
+    { domain: "ploy.ai", type: "기업 발표", grade: "C", oa: true, reason: "자사 사례 글 · 자사 이해관계" },
+    { domain: "marbleos.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 제품 데모 · 자사 이해관계" },
+    { domain: "alphamatch.ai", type: "기업 발표", grade: "C", oa: true, reason: "자사 블로그 비교 글 · 자사 이해관계" },
+    { domain: "ello.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 제품 개발기 · 자사 이해관계" },
+    { domain: "tryai.dev", type: "기업 발표", grade: "C", oa: true, reason: "자사 블로그 비교 글 · 자사 이해관계" },
+    { domain: "tokenstead.ai", type: "기업 발표", grade: "C", oa: true, reason: "자사 가이드 글 · 자사 이해관계 · 규제 내용은 원문(EU) 확인 필요" },
+    { domain: "studyarena.com", type: "기업 발표", grade: "C", oa: true, reason: "자사 이용 데이터 분석 글 · 자사 이해관계" },
+    { domain: "regen.co.uk", type: "기관 분석", grade: "C", oa: true, reason: "영국 에너지 분야 기관 분석 글" },
+    // C · 전문가 개인 블로그 (저자 전문성 확인됨)
+    { domain: "simonwillison.net", type: "전문가 블로그", grade: "C", oa: true, reason: "Django 공동 개발자의 개인 블로그 · 검증 절차 없음" },
+    { domain: "yoshuabengio.org", type: "전문가 블로그", grade: "C", oa: true, reason: "요슈아 벤지오 개인 사이트 · 검증 절차 없음" },
+    { domain: "jvns.ca", type: "전문가 블로그", grade: "C", oa: true, reason: "개발자 개인 블로그 · 검증 절차 없음" },
+    { domain: "matklad.github.io", type: "전문가 블로그", grade: "C", oa: true, reason: "개발자 개인 블로그 · 검증 절차 없음" },
+    // D · 심사 신뢰가 어려운 출판사
+    { domain: "globaljournals.org", type: "학술지", grade: "D", oa: true, reason: "약탈적 출판사 의심 목록에 자주 오르는 곳 · 심사를 신뢰하기 어려움 〔팀원 확인〕" }
   ],
 
   // ── 중요도 ─────────────────────────────────────────────────────────
