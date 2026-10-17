@@ -15,11 +15,11 @@
 //    - 여러 줄이 맞으면 domain이 가장 긴 줄, 그다음 pathPrefix가 있는 줄이 이긴다.
 //    - 어느 줄에도 안 맞으면 unknownGrade를 쓰고 '미등록 도메인' 목록에 띄운다.
 // 3. 중요도 = 등급 가중치 × (1 + 비슷한 기사 수) × 최신성
-//    - 비슷한 기사: 날짜가 같고, 주제가 하나 이상 같고, 추출 키워드가 similarMinShared개 이상 겹치는 다른 기사
-//    - 최신성: 0.5 ^ (기준일과의 날짜 차 ÷ recencyHalfLifeDays). 기준일 = 입력 데이터의 마지막 날짜
+//    - 비슷한 기사: 날짜가 같고, 주제가 하나 이상 같고, 추출 키워드가 score.overlap개 이상 겹치는 다른 기사
+//    - 최신성: 0.5 ^ (기준일과의 날짜 차 ÷ score.recencyHalfLifeDays). 기준일 = 입력 데이터의 마지막 날짜
 // 4. 키워드
 //    - phrases에 있는 구를 먼저 찾아 한 덩어리로 센다.
-//    - 나머지 낱말: 한글은 particles의 조사를 한 번 떼고 minKo음절 이상, 영문은 소문자로 바꿔 minEn자 이상
+//    - 나머지 낱말: 한글은 keywords.particles의 조사를 한 번 떼고 minKo음절 이상, 영문은 소문자로 바꿔 minEn자 이상
 //    - stopwords는 빼고, 한 기사 안에서 같은 키워드는 한 번만 센다 (문서 빈도).
 //    - 기간: 기준일을 포함해 거꾸로 days일. 직전 기간 = 그 바로 앞 같은 길이.
 
@@ -27,18 +27,16 @@ window.RULES = {
   version: "0.1 (0단계 초안 · 2026-10-17)",
 
   // ── W2 · 주제 분류 사전 ────────────────────────────────────────────
-  // 순서 = 화면 표시 순서. 경계는 기획안 v3 「주제 5개」 표를 따른다.
-  topics: [
-    {
-      name: "AI 에이전트",
+  // 주제 이름 → { en, ko, exclude }. 적힌 순서 = 화면 표시 순서 (app.js가 Object.keys로 읽음). 경계는 기획안 v3 「주제 5개」 표를 따른다.
+  topics: {
+    "AI 에이전트": {
       // 에이전트 제품·프레임워크, 도구 호출, 에이전트 프로토콜. 모델 자체 출시는 파운데이션 모델로.
       en: ["ai agent", "ai agents", "agentic", "agent", "agents", "multi-agent", "coding agent",
            "computer use", "browser agent", "mcp", "model context protocol", "a2a", "tool calling", "tool use"],
       ko: ["에이전트", "에이전틱", "멀티에이전트", "도구 호출"],
       exclude: ["travel agent", "real estate agent", "secret agent", "free agent", "fbi agent", "insurance agent"]
     },
-    {
-      name: "AI 윤리·안전·거버넌스",
+    "AI 윤리·안전·거버넌스": {
       // 편향·안전성·정렬, 법·규제, 정부·국제기구 가이드라인. 교육 현장의 윤리 교육은 리터러시·교육으로.
       en: ["ai safety", "safety", "ethics", "ethical", "bias", "biased", "alignment", "deepfake", "deepfakes",
            "misinformation", "disinformation", "guardrail", "guardrails", "regulation", "regulations",
@@ -48,8 +46,7 @@ window.RULES = {
            "거버넌스", "가이드라인", "저작권", "개인정보", "책임성", "투명성"],
       exclude: []
     },
-    {
-      name: "AI 리터러시·교육",
+    "AI 리터러시·교육": {
       // AI 활용 교육, 교사·학생의 AI 사용, 리터러시 측정. 'learning'은 머신러닝과 겹쳐서 넣지 않음.
       en: ["literacy", "education", "educational", "educator", "educators", "school", "schools", "student",
            "students", "teacher", "teachers", "classroom", "classrooms", "curriculum", "university",
@@ -57,16 +54,14 @@ window.RULES = {
       ko: ["리터러시", "교육", "학교", "학생", "교사", "교실", "수업", "대학", "교과서", "디지털교과서", "에듀테크"],
       exclude: ["teacher model", "student model", "teacher-student"]
     },
-    {
-      name: "피지컬 AI·로보틱스",
+    "피지컬 AI·로보틱스": {
       // 휴머노이드, 로봇 기초 모델, 자율주행·제조 현장 AI.
       en: ["robot", "robots", "robotic", "robotics", "humanoid", "humanoids", "physical ai", "embodied",
            "autonomous driving", "self-driving", "robotaxi", "robotaxis", "drone", "drones", "lerobot"],
       ko: ["로봇", "휴머노이드", "피지컬", "자율주행", "로보택시", "드론"],
       exclude: []
     },
-    {
-      name: "파운데이션 모델",
+    "파운데이션 모델": {
       // 상용·오픈 웨이트 모델의 출시, 성능·벤치마크, 가격·라이선스, 지원 중단. 모델을 쓴 응용 사례는 해당 응용 주제로.
       en: ["foundation model", "foundation models", "large language model", "large language models", "llm", "llms",
            "language model", "open-weight", "open weights", "gpt", "chatgpt", "claude", "gemini", "gemma",
@@ -75,12 +70,12 @@ window.RULES = {
            "클로드", "제미나이", "딥시크", "큐원", "벤치마크"],
       exclude: []
     }
-  ],
+  },
 
   // ── W3 · 출처 등급표 ──────────────────────────────────────────────
   // 기준: 기획안 v3 「출처 등급과 근거」 (AI부문_후보.md 부록의 A~D 루브릭)
   // oa: 원문을 무료로 볼 수 있으면 true. 유료 논문은 중요도 상위에 오르기 전에 사람이 확인한다.
-  weights: { A: 3, B: 2, C: 1, D: 0.5 },
+  gradeWeight: { A: 3, B: 2, C: 1, D: 0.5 },
   unknownGrade: "C",
 
   sources: [
@@ -188,8 +183,8 @@ window.RULES = {
 
   // ── 중요도 ─────────────────────────────────────────────────────────
   // 〔사람이 정할 것〕 아래 값은 초안. 바꾸면 기대값(data/expected.md)도 다시 계산한다.
-  importance: {
-    similarMinShared: 2,      // 같은 사건으로 볼 최소 겹침 키워드 수
+  score: {
+    overlap: 2,               // 같은 사건으로 볼 최소 겹침 키워드 수
     recencyHalfLifeDays: 14,  // 14일 지나면 최신성이 절반
     topN: 5                   // 주제 카드마다 보여 줄 건수
   },
