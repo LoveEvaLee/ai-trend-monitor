@@ -4,9 +4,10 @@
 //
 // 적용 방식 (classify.js · keywords.js가 따르는 약속)
 // 1. 주제 분류
-//    - 제목을 소문자로 바꾼 뒤 찾는다.
-//    - en: 낱말 단위로 일치해야 센다 (예: 'eu'는 "statichost.eu"에 걸리지 않음). 구는 구 전체가 일치해야 함.
-//      그래서 숫자가 바로 붙는 모델 이름("Qwen3.8")은 'qwen'으로 안 걸린다 → "qwen3"처럼 따로 적는다.
+//    - 찾기 전에 제목과 키워드를 모두 소문자로 바꾸고, 특수 하이픈(‐ ‑ ‒ – —)을 '-'로 바꾼다.
+//    - en: 낱말 단위로 일치해야 센다. 구는 구 전체가 일치해야 함.
+//      · 앞 경계: 바로 앞 글자가 영문자·숫자·점(.)이 아니어야 함 (예: 'eu'는 "statichost.eu"에 안 걸림 — 강의 64쪽 사례)
+//      · 뒤 경계: 바로 뒤 글자가 영문자가 아니어야 함 → 숫자·점이 붙은 모델 이름("Qwen3.8", "GPT-5")도 걸림
 //    - ko: 제목 안에 그 글자가 들어 있으면 센다 (조사가 붙어도 걸림).
 //    - exclude에 걸리면 그 주제는 붙이지 않는다.
 //    - 한 기사에 여러 주제가 붙을 수 있다. 아무 주제도 안 붙으면 '미분류'.
@@ -42,7 +43,7 @@ window.RULES = {
       en: ["ai safety", "safety", "ethics", "ethical", "bias", "biased", "alignment", "deepfake", "deepfakes",
            "misinformation", "disinformation", "guardrail", "guardrails", "regulation", "regulations",
            "regulator", "regulators", "regulatory", "ai act", "governance", "lawsuit", "copyright",
-           "privacy", "executive order", "accountability", "transparency", "white house", "lawmakers", "watermark", "watermarking"],
+           "privacy", "executive order", "accountability", "transparency", "white house", "lawmakers", "watermark", "watermarking", "oversight"],
       ko: ["윤리", "안전", "편향", "딥페이크", "허위정보", "가짜뉴스", "규제", "기본법", "법안", "입법",
            "거버넌스", "가이드라인", "저작권", "개인정보", "책임성", "투명성", "워터마크", "고영향", "소송"],
       exclude: []
@@ -65,9 +66,9 @@ window.RULES = {
     "파운데이션 모델": {
       // 상용·오픈 웨이트 모델의 출시, 성능·벤치마크, 가격·라이선스, 지원 중단. 모델을 쓴 응용 사례는 해당 응용 주제로.
       en: ["foundation model", "foundation models", "large language model", "large language models", "llm", "llms",
-           "language model", "open-weight", "open weights", "gpt", "chatgpt", "claude", "gemini", "gemma",
+           "language model", "open-weight", "open-weights", "open weights", "gpt", "chatgpt", "claude", "gemini", "gemma",
            "llama", "qwen", "qwen3", "deepseek", "mistral", "grok", "kimi", "glm", "nemotron", "benchmark", "benchmarks"],
-      ko: ["거대언어모델", "대규모 언어모델", "언어모델", "파운데이션 모델", "오픈소스 모델", "챗gpt", "챗GPT",
+      ko: ["거대언어모델", "대규모 언어모델", "언어모델", "파운데이션 모델", "오픈소스 모델", "챗gpt",
            "클로드", "제미나이", "딥시크", "큐원", "네모트론", "벤치마크"],
       exclude: []
     }
@@ -185,7 +186,7 @@ window.RULES = {
     // 작은 인터넷 매체·학술지의 등급은 사이트 소개와 운영 주체만 보고 매긴 기본값이다 〔팀원 확인〕
     // A · 동료심사 · 정부 연구기관
     { domain: "ebooks.iospress.nl", type: "학회 논문", grade: "A", oa: true, reason: "IOS Press 학회 논문집(FAIA) · 동료심사" },
-    { domain: "linkinghub.elsevier.com", type: "학술지", grade: "A", oa: false, reason: "Elsevier 학술지 주소로 넘겨 주는 링크 · 원문 공개는 학술지마다 다름" },
+    { domain: "elsevier.com", type: "학술지", grade: "A", oa: false, reason: "Elsevier 학술지(linkinghub 경유 주소 포함) · 원문 공개는 학술지마다 다름" },
     { domain: "revue-mediations.teluq.ca", type: "학술지", grade: "A", oa: true, reason: "TÉLUQ 대학 동료심사 오픈 액세스 학술지" },
     { domain: "nso.edu", type: "정부 연구기관", grade: "A", oa: true, reason: "미국 국립태양관측소(NSF) 공식 발표 · 1차 자료" },
     // B · 학술 단행본 · 학위논문 · 언론
