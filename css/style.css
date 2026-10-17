@@ -1,0 +1,116 @@
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --text: #1d2330;
+  --muted: #5d6675;
+  --line: #dde1e7;
+  --accent: #2f5bd3;
+  --slot: #f0f3f8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+.page-head, main, .page-foot {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.page-head { padding-top: 24px; }
+.page-head h1 { margin: 0 0 4px; font-size: 1.6rem; }
+.sub, .hint, .page-foot { color: var(--muted); font-size: 0.9rem; }
+.page-foot { padding-bottom: 32px; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+.panel h2 { margin: 0 0 12px; font-size: 1.05rem; }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.row > .panel { margin: 0; }
+
+textarea {
+  width: 100%;
+  font: 0.85rem/1.4 ui-monospace, Consolas, monospace;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.status { color: var(--muted); font-size: 0.9rem; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat { display: flex; flex-direction: column; }
+.stat .label { color: var(--muted); font-size: 0.85rem; }
+.stat .value { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.tabs button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+.tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* 1차 전 컴포넌트 자리 표시. 각 js가 내용을 그리면 이 상자를 바꿔 끼운다 */
+.slot {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  background: var(--slot);
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.slot[data-owner]::before {
+  content: attr(data-owner);
+  display: block;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  margin-right: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 720px) {
+  .row { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
