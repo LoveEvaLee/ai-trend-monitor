@@ -114,3 +114,48 @@ textarea {
   .row { grid-template-columns: 1fr; }
   .stats { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* 그림이 들어간 자리 상자 (W7 · W9). '.slot'은 app.js가 다시 찾으므로 남기고 모양만 바꾼다 */
+.slot.filled {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--text);
+}
+.slot.filled::before { display: none; }
+
+/* W7 · 주제별 개수 막대 */
+.bars { list-style: none; margin: 0; padding: 0; }
+.bars li + li { margin-top: 6px; }
+.bar {
+  display: grid;
+  grid-template-columns: 9.5em 1fr 2.5em;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+button.bar { cursor: pointer; }
+button.bar:hover { border-color: var(--line); }
+button.bar[aria-pressed="true"] { border-color: var(--accent); background: var(--slot); }
+.bar-name { font-size: 0.9rem; }
+.bar-track { height: 14px; background: var(--slot); border-radius: 3px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; border-radius: 3px; }
+.bar-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* W7 · 주별 추이 */
+.trend { width: 100%; height: auto; display: block; }
+.trend .grid { stroke: var(--line); stroke-width: 1; }
+.trend .axis { fill: var(--muted); font-size: 11px; }
+.legend { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.85rem; }
+.legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.legend .hint { color: var(--muted); }
