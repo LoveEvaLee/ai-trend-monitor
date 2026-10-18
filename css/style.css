@@ -159,3 +159,35 @@ button.bar[aria-pressed="true"] { border-color: var(--accent); background: var(-
 .legend { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.85rem; }
 .legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 .legend .hint { color: var(--muted); }
+
+/* W9 · 주제별 중요도 카드 */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.card { border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 8px; padding: 12px; background: var(--panel); }
+.card h3 { margin: 0 0 8px; font-size: 0.95rem; }
+.card-list { margin: 0; padding-left: 1.2em; }
+.card-list li + li { margin-top: 8px; }
+.card-title { font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.card-title a, .unclassified-list a { color: var(--text); }
+.card-meta { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.score { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text); }
+.grade { display: inline-block; min-width: 1.4em; padding: 0 4px; border-radius: 4px; text-align: center; font-weight: 700; font-size: 0.75rem; color: #fff; cursor: help; }
+.grade-A { background: #1f7a4d; }
+.grade-B { background: #2f5bd3; }
+.grade-C { background: #7a8291; }
+.grade-D { background: #b0552f; }
+.grade.unregistered { outline: 1px dashed var(--muted); outline-offset: 1px; }
+
+/* W9 · 키워드 표 */
+.kw { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.kw caption { text-align: left; color: var(--muted); font-size: 0.85rem; padding-bottom: 6px; }
+.kw th, .kw td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+.kw th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
+.kw .num { text-align: right; font-variant-numeric: tabular-nums; }
+.up { color: #1f7a4d; font-weight: 600; }
+.down { color: #b03a48; font-weight: 600; }
+.same { color: var(--muted); }
+
+/* W9 · 미분류 목록 */
+.unclassified-list { list-style: none; margin: 8px 0 0; padding: 0; font-size: 0.9rem; }
+.unclassified-list li { padding: 5px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.unclassified-list .when, .unclassified-list .src { color: var(--muted); font-size: 0.8rem; }
