@@ -88,4 +88,28 @@
   $("#export-md").addEventListener("click", function () {
     download("ai-trend-" + state.baseDate + ".md", ATM.toMarkdown(state.items, state.ranks, state.stats), "text/markdown;charset=utf-8");
   });
+
+  // 열자마자 자동으로 불러오기 (입력 칸이 비어 있을 때만 · 붙여넣기·파일 선택은 그대로)
+  // ① 배포 주소(http/https)에서는 저장소의 data/latest.csv를 먼저 읽는다 — 매일 수집(W12)이 이 파일을 갱신할 자리
+  // ② 그 파일이 없거나, 더블클릭(file://)으로 열어 브라우저가 파일 읽기를 막으면 예시(data/example.js)로 대신한다
+  function autoload() {
+    if ($("#csv-input").value.trim()) return;
+    function useExample(why) {
+      if (!window.EXAMPLE_CSV) return;
+      $("#csv-input").value = EXAMPLE_CSV;
+      run();
+      status($("#input-status").textContent + " · 예시 자동 불러옴" + (why ? " (" + why + ")" : ""));
+    }
+    if (!/^https?:$/.test(location.protocol) || !window.fetch) { useExample(); return; }
+    fetch("data/latest.csv", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : Promise.reject(r.status); })
+      .then(function (text) {
+        if (!text.trim() || $("#csv-input").value.trim()) { if (!text.trim()) useExample("latest.csv 비어 있음"); return; }
+        $("#csv-input").value = text;
+        run();
+        status($("#input-status").textContent + " · data/latest.csv 자동 불러옴");
+      })
+      .catch(function () { useExample("latest.csv 없음"); });
+  }
+  autoload();
 })();

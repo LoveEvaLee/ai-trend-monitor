@@ -39,3 +39,14 @@
 - 117개(기사·논문 116 + 시험용 줄 1) 전수 확인: 112개는 자동 요청으로 바로 열림(200)
 - 5개는 자동 요청이 막혀(403·400·접속 오류) 브라우저로 열어 확인함: `dl.acm.org`, `eduyonhap.com`, `ai.meta.com`, `taylorfrancis.com`, `techspot.com`
 - 브라우저에서도 확인할 수 없던 2건(Cloudflare 확인 화면, 브라우저 차단 사이트)은 다른 기사로 바꿈
+
+## 자동 불러오기와 `latest.csv`
+페이지를 열면 입력 칸이 비어 있을 때 자동으로 데이터를 불러와 분석한다 (`js/app.js`의 `autoload`).
+
+| 여는 방법 | 불러오는 것 |
+|---|---|
+| 배포 주소(`https://…github.io/…`) | `data/latest.csv`가 있으면 그것, 없으면 예시(`example.js`) |
+| 더블클릭(`file://`) | 브라우저가 파일 읽기를 막아서 늘 예시(`example.js`) |
+
+- `data/latest.csv`는 아직 없다. 매일 수집(W12 · #11)이 이 파일을 갱신하면 배포 주소의 화면이 저절로 바뀐다. 형식은 `example.csv`와 같다 (`date,title,url,source`)
+- 붙여넣기 · 파일 선택 · 예시 불러오기 버튼은 그대로 쓸 수 있다
