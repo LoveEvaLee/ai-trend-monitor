@@ -7,7 +7,7 @@ AI 기사·논문 목록(CSV)을 넣으면 `rules.js`에 적힌 기준대로 5�
 | 누구 | 주소 | 배포 방식 |
 |---|---|---|
 | 소유자 (@LoveEvaLee) | https://loveevalee.github.io/ai-trend-monitor/ | 팀 저장소 main · Pages |
-| 팀원 (@katej5) | 추가 예정 | 팀원 fork main · Pages |
+| 팀원 (@katej5) | https://katej5.github.io/ai-trend-monitor/ | 팀원 fork main · Pages |
 
 주소를 열면 예시 데이터가 자동으로 들어가 바로 대시보드가 그려집니다. 서버도, 도구 안 AI 호출도 없는 정적 페이지라 `index.html`을 더블클릭해서 열어도 똑같이 동작합니다.
 
