@@ -18,8 +18,10 @@
 | 함수 | 파일 | 입력 | 출력 |
 |---|---|---|---|
 | `ATM.parseCSV(text)` | `js/import.js` | CSV 문자열 | `{ rows: [{ line, date, title, url, source }], skipped: [{ line, reason }] }`<br>`line`은 원본 줄 번호(머리글 = 1). 빈 줄·날짜 없는 줄은 `skipped`로 |
-| `ATM.classify(rows, rules)` | `js/classify.js` | `parseCSV`의 `rows` · `RULES` | `items` 배열. 한 건 = 기획안의 「A → B로 넘길 결과 한 건」<br>`{ date, title, url, source, grade, gradeReason, topics, keywords, score }`<br>어느 주제에도 안 걸리면 `topics: []` |
-| `ATM.extractKeywords(title, rules)` | `js/keywords.js` | 제목 · `RULES` | `["EU AI Act", "표시 의무"]` 같은 키워드 배열 (한 기사 안에서 중복 없음). `classify`가 불러 씀 |
+| `ATM.classify(rows, rules)` | `js/classify.js` | `parseCSV`의 `rows` · `RULES` | `items` 배열(입력 순서 그대로). 한 건 = 기획안의 「A → B로 넘길 결과 한 건」<br>`{ date, title, url, source, grade, gradeReason, topics, keywords, score }`<br>+ W6에서 더한 칸: `line`(CSV 줄 번호) · `gradeType`(출처 유형) · `oa`(원문 무료 여부, 미등록이면 `null`) · `unregistered`(등급표에 없는 도메인이면 `true`) · `similar`(비슷한 기사의 줄 번호 배열)<br>`score`는 반올림 전 값 → 화면에서 소수 둘째 자리로 표시<br>어느 주제에도 안 걸리면 `topics: []` |
+| `ATM.byImportance(a, b)` | `js/classify.js` | `items`의 두 건 | 중요도 순위 비교 함수: 점수 → 날짜 최신 → 등급 → 줄 번호 (rules.js 동점 규칙). `items.slice().sort(ATM.byImportance)`로 씀. 그리드(W9)는 이걸로 정렬 |
+| `ATM.normalize(s)` | `js/classify.js` | 문자열 | 소문자 + 특수 하이픈을 `-`로. 분류·키워드가 같이 씀 |
+| `ATM.extractKeywords(title, rules)` | `js/keywords.js` | 제목 · `RULES` | `["EU AI Act", "표시 의무"]` 같은 키워드 배열 (한 기사 안에서 중복 없음). `classify`가 불러 씀 · W6에서 먼저 구현 |
 | `ATM.keywordRanks(items, baseDate)` | `js/keywords.js` | `items` · 기준일 `"YYYY-MM-DD"` | `{ "90d": {...}, "30d": {...}, "7d": {...}, "1d": {...} }`<br>각 값 = `{ window: "7d", rank: [{ keyword, count, prev }] }` 상위 10개 |
 
 기준일(`baseDate`)은 `app.js`가 `items`의 가장 늦은 날짜로 정해서 넘긴다.
