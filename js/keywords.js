@@ -1,5 +1,5 @@
 // A · 키워드 추출·기간별 순위 (W8 · 유경). 약속은 js/README.md
-// extractKeywords는 classify의 '비슷한 기사' 계산에 필요해서 W6에서 먼저 구현했다 (#12). keywordRanks는 W8.
+// extractKeywords는 classify의 '비슷한 기사' 계산에 필요해서 W6에서 먼저 구현했다 (#12). keywordRanks는 W8 (#14).
 window.ATM = window.ATM || {};
 
 (function () {
@@ -51,11 +51,33 @@ window.ATM = window.ATM || {};
     return out;
   };
 
-  // items, "YYYY-MM-DD" → { "90d" | "30d" | "7d" | "1d": { window, rank: [{ keyword, count, prev }] } }
-  ATM.keywordRanks = function (items, baseDate) {
-    // 2차에서 구현 (W8 · #14)
+  function daysBetween(a, b) { // "YYYY-MM-DD" 두 개 → b - a (일)
+    return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000);
+  }
+
+  // items, "YYYY-MM-DD"[, RULES] → { "90d" | "30d" | "7d" | "1d": { window, label, days, rank: [{ keyword, count, prev }] } }
+  // - 기간: 기준일을 포함해 거꾸로 days일. prev = 그 바로 앞 같은 길이의 기간에 나온 건수
+  // - 건수는 그 키워드가 들어간 기사 수 (classify가 기사마다 중복 없이 뽑아 둔 item.keywords로 셈)
+  // - 순위: 건수 → 직전 기간 건수 → 글자 코드 순서. 상위 rules.keywords.topN개
+  // - rules를 안 넘기면 전역 RULES를 쓴다 (app.js는 두 인자로 부름)
+  ATM.keywordRanks = function (items, baseDate, rules) {
+    var K = (rules || window.RULES).keywords;
     var out = {};
-    ["90d", "30d", "7d", "1d"].forEach(function (w) { out[w] = { window: w, rank: [] }; });
+    K.windows.forEach(function (w) {
+      var cur = Object.create(null), prev = Object.create(null); // "constructor" 같은 키워드도 안전하게
+      items.forEach(function (it) {
+        var age = daysBetween(it.date, baseDate);
+        var bucket = age >= 0 && age < w.days ? cur : (age >= w.days && age < 2 * w.days ? prev : null);
+        if (!bucket) return;
+        (it.keywords || []).forEach(function (k) { bucket[k] = (bucket[k] || 0) + 1; });
+      });
+      var rank = Object.keys(cur).map(function (k) {
+        return { keyword: k, count: cur[k], prev: prev[k] || 0 };
+      }).sort(function (a, b) {
+        return (b.count - a.count) || (b.prev - a.prev) || (a.keyword < b.keyword ? -1 : a.keyword > b.keyword ? 1 : 0);
+      }).slice(0, K.topN);
+      out[w.id] = { window: w.id, label: w.label, days: w.days, rank: rank };
+    });
     return out;
   };
 })();

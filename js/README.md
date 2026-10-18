@@ -22,7 +22,7 @@
 | `ATM.byImportance(a, b)` | `js/classify.js` | `items`의 두 건 | 중요도 순위 비교 함수: 점수 → 날짜 최신 → 등급 → 줄 번호 (rules.js 동점 규칙). `items.slice().sort(ATM.byImportance)`로 씀. 그리드(W9)는 이걸로 정렬 |
 | `ATM.normalize(s)` | `js/classify.js` | 문자열 | 소문자 + 특수 하이픈을 `-`로. 분류·키워드가 같이 씀 |
 | `ATM.extractKeywords(title, rules)` | `js/keywords.js` | 제목 · `RULES` | `["EU AI Act", "표시 의무"]` 같은 키워드 배열 (한 기사 안에서 중복 없음). `classify`가 불러 씀 · W6에서 먼저 구현 |
-| `ATM.keywordRanks(items, baseDate)` | `js/keywords.js` | `items` · 기준일 `"YYYY-MM-DD"` | `{ "90d": {...}, "30d": {...}, "7d": {...}, "1d": {...} }`<br>각 값 = `{ window: "7d", rank: [{ keyword, count, prev }] }` 상위 10개 |
+| `ATM.keywordRanks(items, baseDate[, rules])` | `js/keywords.js` | `items` · 기준일 `"YYYY-MM-DD"` · (선택) `RULES` — 안 넘기면 전역 `RULES` | `{ "90d": {...}, "30d": {...}, "7d": {...}, "1d": {...} }`<br>각 값 = `{ window: "7d", label: "7일", days: 7, rank: [{ keyword, count, prev }] }` 상위 `rules.keywords.topN`(10)개<br>`count` = 그 기간에 키워드가 들어간 기사 수, `prev` = 바로 앞 같은 길이 기간의 기사 수. 순위는 건수 → 직전 건수 → 글자 코드 순서 |
 
 기준일(`baseDate`)은 `app.js`가 `items`의 가장 늦은 날짜로 정해서 넘긴다.
 
