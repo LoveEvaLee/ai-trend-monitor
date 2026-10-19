@@ -37,7 +37,8 @@
     ATM.renderUnclassified($("#unclassified .slot"), unclassified);
 
     $("#export-csv").disabled = $("#export-md").disabled = items.length === 0;
-    status(items.length ? "기준일 " + baseDate + " · " + items.length + "건" : "분류된 결과가 없습니다 (js 1차 구현 전).");
+    var notes = (parsed.notes || []).join(" · ");
+    status((items.length ? "기준일 " + baseDate + " · " + items.length + "건" : "읽은 기사가 없습니다. 건너뛴 줄의 이유를 확인하세요.") + (notes ? " · " + notes : ""));
   }
 
   // 막대를 누르면 그 주제를 추이에 켜고 끈다
