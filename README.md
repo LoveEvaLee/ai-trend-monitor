@@ -9,6 +9,8 @@ AI 기사·논문 목록(CSV)을 넣으면 `rules.js`에 적힌 기준대로 5�
 | 소유자 (@LoveEvaLee) | https://loveevalee.github.io/ai-trend-monitor/ | 팀 저장소 main · Pages |
 | 팀원 (@katej5) | https://katej5.github.io/ai-trend-monitor/ | 팀원 fork main · Pages |
 
+팀원 fork는 팀 저장소 main이 바뀌어도 저절로 따라오지 않습니다. fork 첫 화면에서 **Sync fork → Update branch**를 눌러야 반영되므로, 두 주소의 화면이 다르면 이것부터 확인합니다.
+
 주소를 열면 예시 데이터가 자동으로 들어가 바로 대시보드가 그려집니다. 서버도, 도구 안 AI 호출도 없는 정적 페이지라 `index.html`을 더블클릭해서 열어도 똑같이 동작합니다.
 
 ## 무엇을 보여 주나
@@ -26,7 +28,7 @@ AI 기사·논문 목록(CSV)을 넣으면 `rules.js`에 적힌 기준대로 5�
 ## 사용법
 
 1. 배포 주소를 열거나 `index.html`을 더블클릭합니다. 예시가 자동으로 분석됩니다.
-2. 내 자료를 보려면 CSV를 입력 칸에 붙여 넣거나 **파일 선택**으로 고른 뒤 **분석**을 누릅니다.
+2. 내 자료를 보려면 CSV를 입력 칸에 붙여 넣은 뒤 **분석**을 누르거나, **파일 선택**으로 고르면 바로 분석됩니다.
 3. CSV 형식은 첫 줄 머리글 `date,title,url,source`, 날짜는 `YYYY-MM-DD`, 인코딩은 UTF-8입니다. 제목에 쉼표가 있으면 큰따옴표로 감쌉니다. 아래는 형식만 보여 주는 예입니다.
 
 ```csv
