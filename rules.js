@@ -63,7 +63,7 @@ window.RULES = {
       en: ["literacy", "education", "educational", "educator", "educators", "school", "schools", "student",
            "students", "teacher", "teachers", "classroom", "classrooms", "curriculum", "university",
            "universities", "edtech", "tutor", "tutoring"],
-      ko: ["리터러시", "교육", "학교", "학생", "교사", "교실", "수업", "대학", "교과서", "디지털교과서", "에듀테크"],
+      ko: ["리터러시", "교육", "학교", "학생", "교사", "교실", "수업", "대학", "교과서", "디지털교과서", "에듀테크", "디지털 리터러시"],
       exclude: ["teacher model", "student model", "teacher-student"]
     },
     "피지컬 AI·로보틱스": {
