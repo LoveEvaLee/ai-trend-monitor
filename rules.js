@@ -36,7 +36,7 @@
 //    - 한계: 형태소 분석기가 없어서 '요청하면' '찾고' 같은 활용형은 남는다.
 
 window.RULES = {
-  version: "0.3 (키워드 잡음 규칙 · 동점 규칙 · 2026-10-18)",
+  version: "0.4 (DOI 접두 등급 · 2026-10-19)",
 
   // ── W2 · 주제 분류 사전 ────────────────────────────────────────────
   // 주제 이름 → { en, ko, exclude }. 적힌 순서 = 화면 표시 순서 (app.js가 Object.keys로 읽음). 경계는 기획안 v3 「주제 5개」 표를 따른다.
@@ -109,6 +109,35 @@ window.RULES = {
     { domain: "ieeexplore.ieee.org", type: "학술지·학회", grade: "A", oa: false, reason: "IEEE 동료심사 논문 · 원문 유료인 경우 많음" },
     { domain: "dl.acm.org", type: "학술지·학회", grade: "A", oa: false, reason: "ACM 동료심사 논문 · 원문 유료인 경우 많음" },
     { domain: "eric.ed.gov", type: "정부 학술 DB", grade: "A", oa: false, reason: "미국 교육부 운영 교육 연구 DB · 원문 공개 여부는 문헌마다 다름" },
+    // A·B·C · DOI 링크 (doi.org · dx.doi.org) — 호스트가 다 같아서 경로의 DOI 접두(발행처 코드)로 가른다.
+    //   논문 목록을 DOI 주소 그대로 넣는 경우(서지 관리 도구·문헌 매트릭스에서 내보낸 CSV)를 위한 줄.
+    //   등급은 같은 발행처의 도메인 줄과 맞췄고, 접두가 아래에 없는 DOI는 그대로 '미등록 C'로 남아 보강 후보에 뜬다.
+    { domain: "doi.org", pathPrefix: "/10.1016/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1016 = Elsevier(sciencedirect.com) 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1002/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1002 = Wiley 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1111/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1111 = Wiley-Blackwell 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1007/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1007 = Springer(link.springer.com) 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1145/", type: "학술지·학회", grade: "A", oa: false, reason: "DOI 10.1145 = ACM(dl.acm.org) 동료심사 논문 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1109/", type: "학술지·학회", grade: "A", oa: false, reason: "DOI 10.1109 = IEEE(ieeexplore.ieee.org) 동료심사 논문 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1177/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1177 = SAGE 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1080/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1080 = Taylor & Francis 동료심사 학술지(단행본 taylorfrancis.com과 구분) · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1093/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1093 = Oxford University Press 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1108/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1108 = Emerald 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1287/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1287 = INFORMS(Information Systems Research · Management Science 등) 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1038/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1038 = Nature(nature.com) 동료심사 학술지 · 원문 유료인 경우 많음" },
+    { domain: "doi.org", pathPrefix: "/10.1126/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1126 = Science(science.org) 동료심사 학술지 · 원문 유료" },
+    { domain: "doi.org", pathPrefix: "/10.3152/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.3152 = Science and Public Policy 등(Oxford) 동료심사 학술지 · 원문 유료" },
+    { domain: "doi.org", pathPrefix: "/10.1525/", type: "학술지", grade: "A", oa: false, reason: "DOI 10.1525 = University of California Press 동료심사 학술지 · 일부 오픈 액세스" },
+    { domain: "doi.org", pathPrefix: "/10.3389/", type: "학술지", grade: "A", oa: true, reason: "DOI 10.3389 = Frontiers(frontiersin.org) 동료심사 오픈 액세스 학술지" },
+    { domain: "doi.org", pathPrefix: "/10.3390/", type: "학술지", grade: "A", oa: true, reason: "DOI 10.3390 = MDPI(mdpi.com) 동료심사 오픈 액세스 학술지 · 학술지별 심사 수준 편차 있어 확인 필요" },
+    { domain: "doi.org", pathPrefix: "/10.1371/", type: "학술지", grade: "A", oa: true, reason: "DOI 10.1371 = PLOS(plos.org) 동료심사 오픈 액세스 학술지" },
+    { domain: "doi.org", pathPrefix: "/10.1186/", type: "학술지", grade: "A", oa: true, reason: "DOI 10.1186 = BioMed Central(Springer Nature) 동료심사 오픈 액세스 학술지" },
+    { domain: "doi.org", pathPrefix: "/10.14763/", type: "학술지", grade: "A", oa: true, reason: "DOI 10.14763 = Internet Policy Review 동료심사 오픈 액세스 학술지" },
+    { domain: "doi.org", pathPrefix: "/10.16997/", type: "학술지", grade: "A", oa: true, reason: "DOI 10.16997 = Journal of Deliberative Democracy 등(Westminster UP) 동료심사 오픈 액세스 학술지" },
+    { domain: "doi.org", pathPrefix: "/10.1787/", type: "국제기구", grade: "A", oa: true, reason: "DOI 10.1787 = OECD(oecd.org) 공식 문서 · 1차 자료" },
+    { domain: "doi.org", pathPrefix: "/10.48550/", type: "프리프린트", grade: "B", oa: true, reason: "DOI 10.48550 = arXiv(arxiv.org) 심사 전 논문 · 원문 무료" },
+    { domain: "doi.org", pathPrefix: "/10.2139/", type: "프리프린트", grade: "B", oa: true, reason: "DOI 10.2139 = SSRN 심사 전 논문 · 원문 무료" },
+    { domain: "doi.org", pathPrefix: "/10.21203/", type: "프리프린트", grade: "B", oa: true, reason: "DOI 10.21203 = Research Square 심사 전 논문 · 원문 무료" },
+    { domain: "doi.org", pathPrefix: "/10.5281/", type: "연구 저장소", grade: "C", oa: true, reason: "DOI 10.5281 = Zenodo(zenodo.org) 누구나 올리는 저장소 · 심사 없음" },
     // A · 정부·국제기구 1차 문서
     { domain: "europa.eu", type: "국제기구", grade: "A", oa: true, reason: "EU 기관 공식 문서 · 1차 자료" },
     { domain: "oecd.org", type: "국제기구", grade: "A", oa: true, reason: "OECD 공식 문서 · 1차 자료" },
